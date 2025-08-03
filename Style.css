@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Open+Sans:wght@400;600;700&display=swap');
+
+:root {
+    --primary: #3a506b;
+    --secondary: #5bc0be;
+    --accent: #ff7e5f;
+    --light: #f8f9fa;
+    --dark: #212529;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    background-color: #f5f7fa;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Merriweather', serif;
+}
+
+.sidebar {
+    transition: all 0.3s ease;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.status-available {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-borrowed {
+    background-color: #fff3cd;
+    color: #856404;
+}
+
+.status-overdue {
+    background-color: #f8d7da;
+    color: #721c24;
+}

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - LibraFlow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #43cea2, #185a9d);
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md animate-fadeIn">
+    <div class="flex justify-center mb-4">
+      <img src="https://gulms.galgotiasuniversity.org/pluginfile.php/1/core_admin/logocompact/300x300/1750839009/New%20Logo%20GU.jpg" alt="Galgotias Logo" class="w-50 h-20" />
+    </div>
+    <h2 class="text-2xl font-bold text-center text-gray-700 mb-6">Register New Admin</h2>
+    <form id="registerForm" class="space-y-4">
+      <div>
+        <label for="newUsername" class="block text-sm font-medium text-gray-700">Username</label>
+        <input type="text" id="newUsername" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-green-500 focus:border-green-500" required />
+      </div>
+      <div>
+        <label for="newPassword" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="newPassword" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-green-500 focus:border-green-500" required />
+      </div>
+      <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">
+        Register
+      </button>
+    </form>
+    <p id="registerSuccess" class="text-green-500 text-sm mt-4 text-center hidden">
+      Admin registered successfully! <a href="login.html" class="underline text-blue-600">Login now</a>
+    </p>
+  </div>
+
+  <script>
+    const registerForm = document.getElementById("registerForm");
+
+    registerForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const newUsername = document.getElementById("newUsername").value.trim();
+      const newPassword = document.getElementById("newPassword").value.trim();
+
+      let storedAdmins = JSON.parse(localStorage.getItem("admins") || "[]");
+
+      const exists = storedAdmins.some(admin => admin.username === newUsername);
+      if (!exists) {
+        storedAdmins.push({ username: newUsername, password: newPassword });
+        localStorage.setItem("admins", JSON.stringify(storedAdmins));
+        document.getElementById("registerSuccess").classList.remove("hidden");
+        registerForm.reset();
+      } else {
+        alert("Username already exists!");
+      }
+    });
+  </script>
+</body>
+</html>

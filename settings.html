@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - LibraFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="max-w-3xl mx-auto px-4 py-8">
+        <h1 class="text-2xl font-bold mb-6">Settings</h1>
+
+        <form id="settingsForm" class="bg-white p-6 shadow rounded space-y-4">
+            <div>
+                <label for="libraryName" class="block text-sm font-medium text-gray-700">Library Name</label>
+                <input type="text" id="libraryName" name="libraryName" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+            </div>
+            <div>
+                <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
+                <textarea id="address" name="address" rows="3" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm"></textarea>
+            </div>
+            <div>
+                <label for="contactEmail" class="block text-sm font-medium text-gray-700">Contact Email</label>
+                <input type="email" id="contactEmail" name="contactEmail" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+            </div>
+            <div>
+                <label for="contactPhone" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                <input type="tel" id="contactPhone" name="contactPhone" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Save Settings
+            </button>
+        </form>
+
+        <div id="saveMessage" class="text-green-600 mt-4 hidden">Settings saved successfully!</div>
+
+        <a href="index.html" class="mt-6 inline-block text-blue-600 hover:underline">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

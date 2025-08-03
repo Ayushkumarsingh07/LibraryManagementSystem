@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Book - LibraFlow</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --bg-light: #f9fafb;
+      --text-dark: #1f2937;
+      --border: #e5e7eb;
+    }
+    body {
+      background: linear-gradient(to bottom right, #e0e7ff, #ffffff, #f3e8ff);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 3rem auto;
+      background: #fff;
+      padding: 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      border-radius: 1rem;
+      border: 1px solid var(--border);
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: var(--primary-dark);
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    form > div {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      font-size: 0.875rem;
+      margin-bottom: 0.25rem;
+      color: var(--text-dark);
+    }
+
+    input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #d1d5db;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      transition: box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    }
+
+    button {
+      width: 100%;
+      background-color: var(--primary);
+      color: #fff;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    #bookSuccess {
+      text-align: center;
+      margin-top: 1rem;
+      font-weight: 600;
+      color: #16a34a;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Add New Book</h1>
+    <form id="addBookForm">
+      <div>
+        <label for="isbn">ISBN</label>
+        <input type="text" id="isbn" name="isbn" required />
+      </div>
+      <div>
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" required />
+      </div>
+      <div>
+        <label for="author">Author</label>
+        <input type="text" id="author" name="author" required />
+      </div>
+      <div>
+        <label for="category">Category</label>
+        <input type="text" id="category" name="category" required />
+      </div>
+      <button type="submit">Add Book</button>
+    </form>
+    <div style="display: flex; justify-content: space-between; margin-top: 1.5rem;">
+      <a href="index.html" class="back-link" style="margin-top: 0; text-align: left;">← Back to Dashboard</a>
+      <a href="books.html" class="back-link" style="margin-top: 0; text-align: right;">View All Books →</a>
+    </div>
+  </div>
+  <script>
+    document.getElementById('addBookForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const isbn = document.getElementById('isbn').value;
+      const title = document.getElementById('title').value;
+      const author = document.getElementById('author').value;
+      const category = document.getElementById('category').value;
+
+      const books = JSON.parse(localStorage.getItem('books')) || [];
+      books.push({ isbn, title, author, category, status: 'Available' });
+      localStorage.setItem('books', JSON.stringify(books));
+
+      alert('Book added successfully!');
+      this.reset();
+    });
+  </script>
+</body>
+</html>

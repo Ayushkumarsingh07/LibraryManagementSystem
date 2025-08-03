@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Books - LibraFlow</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    th, td {
+      padding: 0.75rem;
+    }
+    th {
+      background-color: #eef2ff;
+    }
+    button {
+      transition: all 0.2s ease-in-out;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-100 via-white to-purple-100 min-h-screen font-sans">
+  <div class="max-w-5xl mx-auto py-8 px-4">
+    <h1 class="text-2xl font-bold mb-6 text-center text-indigo-700">Books List</h1>
+    <div class="overflow-x-auto bg-white shadow-xl rounded-xl p-8 border border-gray-200">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-indigo-100">
+          <tr class="text-indigo-800 text-sm">
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase">Title</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase">Author</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase">ISBN</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase">Category</th>
+            <th class="px-6 py-3 text-left text-sm font-semibold text-gray-700 uppercase">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="booksBody" class="divide-y divide-gray-200"></tbody>
+      </table>
+      <div class="mt-6 text-center">
+        <a href="index.html" class="inline-block px-6 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition">Back to Dashboard</a>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let books = localStorage.getItem('books');
+    
+    try {
+      books = JSON.parse(books);
+      if (!Array.isArray(books)) throw new Error();
+    } catch (e) {
+      books = [];
+    }
+
+    const tbody = document.getElementById('booksBody');
+
+    if (books.length === 0) {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td colspan="5" class="text-center text-gray-500 py-4">No books available</td>`;
+      tbody.appendChild(row);
+    } else {
+      books.forEach((book, index) => {
+        if (typeof book === 'object' && book !== null && 'title' in book && 'author' in book && 'isbn' in book && 'category' in book) {
+          const row = document.createElement('tr');
+          row.classList.add("hover:bg-gray-100", "transition", "duration-200");
+          row.innerHTML = `
+            <td>${book.title}</td>
+            <td>${book.author}</td>
+            <td>${book.isbn}</td>
+            <td>${book.category}</td>
+            <td>
+              <button class="text-blue-500 hover:underline mr-2" onclick="editBook(${index})">Edit</button>
+              <button class="text-red-500 hover:underline" onclick="deleteBook(${index})">Delete</button>
+            </td>
+          `;
+          tbody.appendChild(row);
+        }
+      });
+    }
+  });
+
+  function deleteBook(index) {
+    const books = JSON.parse(localStorage.getItem('books')) || [];
+    books.splice(index, 1);
+    localStorage.setItem('books', JSON.stringify(books));
+    location.reload();
+  }
+
+  function editBook(index) {
+    const books = JSON.parse(localStorage.getItem('books')) || [];
+    const book = books[index];
+
+    const newTitle = prompt("Edit Title:", book.title);
+    const newAuthor = prompt("Edit Author:", book.author);
+    const newISBN = prompt("Edit ISBN:", book.isbn);
+    const newCategory = prompt("Edit Category:", book.category);
+
+    if (newTitle && newAuthor && newISBN && newCategory) {
+      books[index] = {
+        title: newTitle,
+        author: newAuthor,
+        isbn: newISBN,
+        category: newCategory
+      };
+      localStorage.setItem('books', JSON.stringify(books));
+      location.reload();
+    }
+  }
+</script>
+</html>

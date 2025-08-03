@@ -1,0 +1,10 @@
+[
+  {
+    "_id": "1",
+    "isbn": "978-3-16-148410-0",
+    "title": "The Silent Patient",
+    "author": "Alex Michaelides",
+    "category": "Psychological Thriller",
+    "status": "Available"
+  }
+]

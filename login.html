@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - LibraFlow</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: linear-gradient(to right, #43cea2, #185a9d);
+    }
+  </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+  <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md animate-fadeIn">
+    <div class="flex justify-center mb-4">
+      <img src="https://gulms.galgotiasuniversity.org/pluginfile.php/1/core_admin/logocompact/300x300/1750839009/New%20Logo%20GU.jpg" alt="Galgotias Logo" class="w-45 h-20" />
+    </div>
+    <form id="loginForm" class="space-y-4">
+      <div>
+        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+        <input type="text" id="username" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <div>
+        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+        <input type="password" id="password" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm px-4 py-2 focus:ring-indigo-500 focus:border-indigo-500" required />
+      </div>
+      <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition">
+        Login
+      </button>
+    </form>
+    <p class="text-center mt-4 text-sm text-gray-600">
+      New admin? <a href="register.html" class="text-indigo-600 hover:underline">Click here to register</a>
+    </p>
+    <p id="error" class="text-red-500 text-sm mt-4 text-center hidden">Invalid username or password.</p>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById("loginForm");
+
+    // Load existing admins from localStorage or initialize
+    let storedAdmins = JSON.parse(localStorage.getItem("admins") || "[]");
+
+    loginForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value.trim();
+
+      // Validate against all stored admins
+      const match = storedAdmins.find(admin => admin.username === username && admin.password === password);
+
+      if (match) {
+        localStorage.setItem("isLoggedIn", "true");
+        localStorage.setItem("loggedInAdmin", username);
+        window.location.href = "index.html";
+      } else {
+        document.getElementById("error").classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>

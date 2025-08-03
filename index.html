@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script>
+      if (localStorage.getItem("isLoggedIn") !== "true") {
+        window.location.href = "login.html";
+      }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LibraFlow - Library Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Animate.css and custom styles should be inside <head> -->
+</head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <style>
+      #siteIntro {
+        background: linear-gradient(135deg, #ffffff, #f3f4f6);
+      }
+      #siteIntro.fade-out {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 3s cubic-bezier(.4,0,.2,1);
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: linear-gradient(135deg, #e0eafc, #cfdef3);
+        background-size: cover;
+        /* animation: fadeInBody 1s ease-in; */ /* Fade animation disabled */
+      }
+      @keyframes fadeInBody {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .hover-scale:hover {
+        transform: scale(1.05);
+        transition: transform 0.3s ease-in-out;
+      }
+      .swipe-hint {
+        display: none;
+      }
+      .sidebar {
+        background: #ffffff;
+        box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+      }
+      .stat-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeInZoom 0.7s cubic-bezier(.18,.89,.32,1.28);
+      }
+      .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      }
+      .quick-action {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        animation: fadeInZoom 0.7s cubic-bezier(.18,.89,.32,1.28);
+      }
+      .quick-action:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+      }
+      /* Modern gradient button style */
+      button.bg-indigo-600,
+      button.bg-red-500,
+      button.bg-blue-500,
+      button.bg-green-500,
+      button.bg-yellow-500,
+      button.bg-purple-500 {
+        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        box-shadow: 0 4px 14px 0 rgba(118,75,162,0.12);
+        transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+        animation: fadeInZoom 0.7s cubic-bezier(.18,.89,.32,1.28);
+      }
+      button.bg-indigo-600:hover,
+      button.bg-red-500:hover,
+      button.bg-blue-500:hover,
+      button.bg-green-500:hover,
+      button.bg-yellow-500:hover,
+      button.bg-purple-500:hover {
+        transform: scale(1.07);
+        box-shadow: 0 8px 24px 0 rgba(118,75,162,0.16);
+        background: linear-gradient(90deg, #764ba2 0%, #667eea 100%);
+      }
+      /* Fade-in and zoom-in animation */
+      @keyframes fadeInZoom {
+        0% { opacity: 0; transform: scale(0.92);}
+        100% { opacity: 1; transform: scale(1);}
+      }
+</style>
+    <style>
+      @media (max-width: 768px) {
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100%;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 40;
+        }
+        .sidebar.show {
+          transform: translateX(0);
+        }
+      }
+      /* Sidebar transitions for larger screens */
+      @media (min-width: 769px) {
+        .sidebar {
+          transition: transform 0.3s ease;
+        }
+        .sidebar.hidden {
+          transform: translateX(-100%);
+        }
+        .sidebar.show {
+          transform: translateX(0%);
+        }
+      }
+    </style>
+</head>
+<body class="min-h-screen bg-fixed bg-cover bg-center" style="background-image: url('http://103.47.12.40/opac-tmpl/bootstrap/images/gu6.jpg');">
+  <button id="sidebarToggle" class="fixed top-4 left-4 z-50 bg-indigo-600 text-white p-2 rounded-md shadow-md hover:bg-indigo-700 md:hidden">
+    <i class="fas fa-bars"></i>
+  </button>
+  <div id="siteIntro" class="fixed inset-0 bg-white z-50 flex flex-col justify-center items-center transition-opacity duration-1000 ease-in-out">
+    <img src="https://gulms.galgotiasuniversity.org/pluginfile.php/1/core_admin/logocompact/300x300/1750839009/New%20Logo%20GU.jpg" alt="Galgotias Logo" class="w-32 h-auto mb-6 animate__animated animate__zoomIn" />
+    <h1 class="text-2xl md:text-4xl font-bold text-red-700 animate__animated animate__fadeInUp">Welcome to</h1>
+    <h2 class="text-xl md:text-3xl font-semibold text-gray-800 animate__animated animate__fadeInUp animate__delay-1s">Galgotias University Library</h2>
+  </div>
+    <div class="swipe-hint">Swipe →</div>
+    <div class="flex h-screen overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar bg-white w-64 border-r border-gray-200 flex flex-col">
+            <div class="p-4 border-b border-gray-200 flex items-center">
+                <div class="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center mr-3">
+                    <i class="fas fa-book text-white"></i>
+                </div>
+                <h1 class="text-xl font-bold text-gray-800">LibraFlow</h1>
+            </div>
+            <nav class="flex-1 overflow-y-auto p-4">
+                <div class="mb-8">
+                    <h3 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Navigation</h3>
+                    <ul class="space-y-2">
+                      <li class="relative group">
+                        <button class="w-full flex justify-between items-center text-gray-700 p-2 hover:bg-gray-100 rounded-lg focus:outline-none">
+                          <span class="flex items-center"><i class="fas fa-bars mr-3"></i> Menu</span>
+                          <i class="fas fa-chevron-down transition-transform duration-200 group-hover:rotate-180"></i>
+                        </button>
+                        <ul class="mt-2 pl-4 hidden group-hover:block space-y-1">
+                          <li>
+                            <a href="dashboard.html" class="block px-2 py-1 hover:bg-blue-50 rounded-lg text-gray-700">
+                              <i class="fas fa-home mr-2 text-blue-600"></i> Dashboard
+                            </a>
+                          </li>
+                          <li>
+                            <a href="books.html" class="block px-2 py-1 hover:bg-blue-50 rounded-lg text-gray-700">
+                              <i class="fas fa-book-open mr-2"></i> Books
+                            </a>
+                          </li>
+                          <li>
+                            <a href="members.html" class="block px-2 py-1 hover:bg-blue-50 rounded-lg text-gray-700">
+                              <i class="fas fa-users mr-2"></i> Members
+                            </a>
+                          </li>
+                          <li>
+                            <a href="transactions.html" class="block px-2 py-1 hover:bg-blue-50 rounded-lg text-gray-700">
+                              <i class="fas fa-exchange-alt mr-2"></i> Transactions
+                            </a>
+                          </li>
+                          <li>
+                            <a href="fines.html" class="block px-2 py-1 hover:bg-blue-50 rounded-lg text-gray-700">
+                              <i class="fas fa-dollar-sign mr-2"></i> Fines
+                            </a>
+                          </li>
+                          <li>
+                            <a href="settings.html" class="block px-2 py-1 hover:bg-blue-50 rounded-lg text-gray-700">
+                              <i class="fas fa-cog mr-2"></i> Settings
+                            </a>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                </div>
+            </nav>
+            <div class="p-4 border-t border-gray-200">
+                <div class="flex items-center space-x-3 bg-gray-50 p-3 rounded-md shadow-sm text-sm">
+                    <img src="https://placehold.co/32x32" alt="Admin Avatar" class="w-8 h-8 rounded-full border border-gray-300">
+                    <div class="flex-1">
+                        <p class="text-gray-600">Admin: <strong class="text-gray-800" id="adminInfoName"></strong></p>
+                        <p class="text-gray-500 text-xs">Administrator</p>
+                    </div>
+                    <button onclick="logoutAdmin()" class="px-2 py-1 text-xs bg-red-500 text-white rounded hover:bg-red-600">Logout</button>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Main Content -->
+        <div class="flex-1 overflow-auto">
+            <header class="bg-white border-b border-gray-200 p-4 flex justify-between items-center">
+                <h2 class="text-xl font-bold text-gray-800">Dashboard</h2>
+                <div class="flex items-center">
+                    <div class="relative mr-4">
+                        <input type="text" placeholder="Search..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent w-64">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                    <button class="p-2 rounded-full hover:bg-gray-100 text-gray-600">
+                        <i class="fas fa-bell"></i>
+                        <span class="sr-only">Notifications</span>
+                    </button>
+                    <div class="ml-4">
+                        <button onclick="logoutAdmin()" id="logoutButton" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition">Logout</button>
+                    </div>
+                </div>
+            </header>
+    
+            <main class="p-6">
+                <!-- Stats Overview -->
+                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-sm stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Total Books</p>
+                                <h3 class="text-2xl font-bold" id="totalBooksCount">0</h3>
+                            </div>
+                            <div class="p-3 rounded-lg bg-blue-100 text-blue-600">
+                                <i class="fas fa-book"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Available Books</p>
+                                <h3 class="text-2xl font-bold" id="availableBooksCount">0</h3>
+                            </div>
+                            <div class="p-3 rounded-lg bg-green-100 text-green-600">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Borrowed Today</p>
+                                <h3 class="text-2xl font-bold" id="borrowedTodayCount">0</h3>
+                            </div>
+                            <div class="p-3 rounded-lg bg-yellow-100 text-yellow-600">
+                                <i class="fas fa-exchange-alt"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-xl shadow-sm stat-card">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-gray-500 text-sm">Pending Fines</p>
+                                <h3 class="text-2xl font-bold" id="pendingFinesAmount">₹0.00</h3>
+                            </div>
+                            <div class="p-3 rounded-lg bg-red-100 text-red-600">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <!-- Quick Actions -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                    <a href="add-book.html" class="block">
+                        <button class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-blue-500 transition-all quick-action animate__animated animate__pulse hover:animate__heartBeat" data-action="add-book">
+                            <i class="fas fa-plus-circle text-blue-500 mb-2"></i>
+                            <p>Add New Book</p>
+                        </button>
+                    </a>
+                    <a href="register-member.html" class="block">
+                        <button class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-green-500 transition-all quick-action animate__animated animate__pulse hover:animate__heartBeat" data-action="register-member">
+                            <i class="fas fa-user-plus text-green-500 mb-2"></i>
+                            <p>Register Member</p>
+                        </button>
+                    </a>
+                    <a href="borrow-book.html" class="block">
+                        <button class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-yellow-500 transition-all quick-action animate__animated animate__pulse hover:animate__heartBeat" data-action="borrow-book">
+                            <i class="fas fa-book-reader text-yellow-500 mb-2"></i>
+                            <p>Borrow Book</p>
+                        </button>
+                    </a>
+                    <a href="process-fine.html" class="block">
+                        <button class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 hover:border-purple-500 transition-all quick-action animate__animated animate__pulse hover:animate__heartBeat" data-action="process-fine">
+                            <i class="fas fa-hand-holding-usd text-purple-500 mb-2"></i>
+                            <p>Process Fine</p>
+                        </button>
+                    </a>
+                </div>
+    
+                <!-- Recently Added Books (table) -->
+                <!-- Borrowed, Returned, and Overdue Books (cards) -->
+                <!-- Include your full table rows and recent transaction UI blocks here -->
+
+                <div id="searchResultsContainer" class="mt-4 space-y-2"></div>
+            </main>
+        </div>
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const books = JSON.parse(localStorage.getItem("books") || "[]");
+        const fines = JSON.parse(localStorage.getItem("fines") || "[]");
+
+        const totalBooks = books.length;
+        const availableBooks = books.filter(b => b.status !== "borrowed").length;
+        const now = new Date();
+        const borrowedToday = books.filter(b => {
+            if (b.status !== "borrowed" || !b.borrowedDate) return false;
+            const borrowedDate = new Date(b.borrowedDate);
+            return borrowedDate.toDateString() === now.toDateString();
+        }).length;
+        const pendingFines = fines.reduce((sum, f) => {
+            const fineAmount = parseFloat(f.amount) || 0;
+            return f.status !== "Paid" ? sum + fineAmount : sum;
+        }, 0);
+
+        document.getElementById("totalBooksCount").textContent = totalBooks;
+        document.getElementById("availableBooksCount").textContent = availableBooks;
+        document.getElementById("borrowedTodayCount").textContent = borrowedToday;
+        document.getElementById("pendingFinesAmount").textContent = `₹${pendingFines.toFixed(2)}`;
+
+        // Recently Borrowed
+        const recentBorrowed = books.filter(b => b.status === "borrowed").slice(0, 2);
+        const borrowedContainer = document.getElementById('recentBorrowed');
+        if (borrowedContainer) {
+            borrowedContainer.innerHTML = recentBorrowed.map(book => `
+                <div class="flex items-start">
+                    <img src="${book.cover || 'https://placehold.co/80x120'}" alt="${book.title || 'Book Cover'}" class="w-12 h-16 object-cover rounded mr-3 border">
+                    <div>
+                        <h4 class="font-medium">${book.title}</h4>
+                        <p class="text-sm text-gray-500">${book.author}</p>
+                        <div class="flex items-center mt-1">
+                            <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded mr-2">${book.due ? `Due in ${book.due}` : 'Due Soon'}</span>
+                            <span class="text-xs text-gray-500">Borrowed by: ${book.borrower || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // Recently Returned
+        const recentReturned = books.filter(b => b.status === "returned").slice(0, 2);
+        const returnedContainer = document.getElementById('recentReturned');
+        if (returnedContainer) {
+            returnedContainer.innerHTML = recentReturned.map(book => `
+                <div class="flex items-start">
+                    <img src="${book.cover || 'https://placehold.co/80x120'}" alt="${book.title || 'Book Cover'}" class="w-12 h-16 object-cover rounded mr-3 border">
+                    <div>
+                        <h4 class="font-medium">${book.title}</h4>
+                        <p class="text-sm text-gray-500">${book.author}</p>
+                        <div class="flex items-center mt-1">
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded mr-2">Returned</span>
+                            <span class="text-xs text-gray-500">By: ${book.borrower || 'N/A'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // Overdue Books
+        const overdueBooks = books.filter(b => b.overdue === true).slice(0, 2);
+        const overdueContainer = document.getElementById('overdueBooks');
+        if (overdueContainer) {
+            overdueContainer.innerHTML = overdueBooks.map(book => `
+                <div class="flex items-start">
+                    <img src="${book.cover || 'https://placehold.co/80x120'}" alt="${book.title || 'Book Cover'}" class="w-12 h-16 object-cover rounded mr-3 border">
+                    <div>
+                        <h4 class="font-medium">${book.title}</h4>
+                        <p class="text-sm text-gray-500">${book.author}</p>
+                        <div class="flex items-center mt-1">
+                            <span class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded mr-2">${book.overdueDays || 0} days overdue</span>
+                            <span class="text-xs text-gray-500">Fine: ₹${book.fine?.toFixed(2) || '0.00'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // --- Search functionality ---
+        const searchInput = document.querySelector('input[placeholder="Search..."]');
+        let debounceTimer;
+        if (searchInput) {
+            searchInput.addEventListener("input", () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    const searchTerm = searchInput.value.toLowerCase();
+                    const allBooks = JSON.parse(localStorage.getItem("books") || "[]");
+
+                    const filteredBooks = allBooks.filter(book =>
+                        book.title.toLowerCase().includes(searchTerm) ||
+                        book.author.toLowerCase().includes(searchTerm) ||
+                        (book.borrower && book.borrower.toLowerCase().includes(searchTerm))
+                    );
+
+                    const searchResultsContainer = document.querySelector("#searchResultsContainer");
+                    if (searchResultsContainer) {
+                        searchResultsContainer.innerHTML = filteredBooks.map(book => {
+                            const highlight = (text) =>
+                                text.replace(new RegExp(searchTerm, 'gi'), match => `<mark class="bg-yellow-100 font-semibold">${match}</mark>`);
+
+                            return `
+                                <div class="flex items-center justify-between bg-white border border-gray-200 rounded-md shadow-sm px-3 py-2 mb-2 hover:shadow transition text-sm">
+                                    <div class="flex items-center">
+                                        <img src="${book.cover || 'https://placehold.co/80x120'}" alt="${book.title || 'Book Cover'}" class="w-10 h-14 object-cover rounded border mr-3">
+                                        <div>
+                                            <h4 class="font-semibold text-gray-800">${highlight(book.title)}</h4>
+                                            <p class="text-gray-600">Author: ${highlight(book.author)}</p>
+                                            <p class="text-gray-500">Status: <span class="font-medium">${book.status || 'N/A'}</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="px-3 py-1 text-xs bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">View</button>
+                                        <button class="px-3 py-1 text-xs bg-green-500 text-white rounded-lg hover:bg-green-600 transition">Edit</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join("") || "<p class='text-gray-500 text-center text-sm'>No results found.</p>";
+                        window.scrollTo({ top: searchResultsContainer.offsetTop - 100, behavior: "smooth" });
+                    }
+                }, 300);
+            });
+        }
+        // --- End Search functionality ---
+        // Quick-action bounce animation
+        document.querySelectorAll('.quick-action').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.add('animate__bounce');
+                setTimeout(() => btn.classList.remove('animate__bounce'), 1000);
+            });
+        });
+    });
+    </script>
+</main>
+<script src="script.js"></script>
+</main>
+<script src="script.js"></script>
+<script>
+    document.getElementById("sidebarToggle").addEventListener("click", () => {
+      document.querySelector(".sidebar").classList.toggle("show");
+    });
+</script>
+<script>
+    const adminName = localStorage.getItem("loggedInAdmin");
+    if (adminName) {
+        const adminInfoNameEl = document.getElementById("adminInfoName");
+        if (adminInfoNameEl) {
+            adminInfoNameEl.textContent = adminName;
+        }
+        document.querySelector(".admin-login-button")?.classList.add("hidden");
+        document.getElementById("logoutButton")?.classList.remove("hidden");
+    }
+    function logoutAdmin() {
+        localStorage.removeItem("loggedInAdmin");
+        localStorage.removeItem("isLoggedIn");
+        window.location.href = "login.html";
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8/hammer.min.js"></script>
+<script>
+  const sidebar = document.querySelector('.sidebar');
+  const mc = new Hammer(document.body);
+  // Only enable touch gestures
+  mc.get('swipe').set({ enable: true, direction: Hammer.DIRECTION_HORIZONTAL });
+  function smoothToggleSidebar(show) {
+      if (!sidebar) return;
+      sidebar.style.transition = "transform 0.4s ease-in-out";
+      if (show) {
+          sidebar.classList.remove("hidden");
+          sidebar.style.transform = "translateX(0%)";
+      } else {
+          sidebar.style.transform = "translateX(-100%)";
+          setTimeout(() => sidebar.classList.add("hidden"), 400);
+      }
+  }
+  // Use only if touch is supported
+  if ('ontouchstart' in window || navigator.maxTouchPoints) {
+      mc.on("swipeleft", () => smoothToggleSidebar(false));
+      mc.on("swiperight", () => smoothToggleSidebar(true));
+  }
+</script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const siteIntro = document.getElementById("siteIntro");
+
+    // Do not reset introPlayed on navigation
+    const hasPlayedIntro = sessionStorage.getItem("introPlayed");
+
+    if (!hasPlayedIntro && siteIntro) {
+      siteIntro.classList.remove("hidden");
+      siteIntro.style.opacity = "1";
+
+      // Trigger fade-out after 2 seconds
+      setTimeout(() => {
+        siteIntro.classList.add("fade-out");
+
+        // Hide element completely after fade-out finishes (3s)
+        setTimeout(() => {
+          siteIntro.classList.add("hidden");
+        }, 1000);
+      }, 2000);
+
+      sessionStorage.setItem("introPlayed", "true");
+    } else {
+      // Immediately hide intro on repeat views
+      if (siteIntro) siteIntro.classList.add("hidden");
+    }
+  });
+  if (!localStorage.getItem("isLoggedIn")) {
+    window.location.href = "login.html";
+  }
+</script>
+</body>
+</html>
